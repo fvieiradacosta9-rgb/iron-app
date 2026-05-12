@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>IRON — Francisco</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg:#0a0a0f; --bg2:#111118; --bg3:#1a1a24;
+  --card:#14141e; --card2:#1e1e2e;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
+  --text:#f0f0f5; --muted:#6b6b80; --muted2:#9090a8;
+  --accent:#e8ff47; --accent2:#7c3aed; --accent3:#06d6a0;
+  --accent4:#ff6b6b; --accent5:#ffa94d;
+  --orange:#ff7c29; --blue:#4dabf7; --pink:#f77fbe;
+  --mono:'Space Mono',monospace; --display:'Bebas Neue',sans-serif; --body:'DM Sans',sans-serif;
+  --r:16px; --r2:12px;
+  --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.app{max-width:430px;margin:0 auto;min-height:100vh;position:relative}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);padding:calc(var(--safe-top) + 12px) 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.topbar-logo{font-family:var(--display);font-size:28px;letter-spacing:2px;color:var(--accent);line-height:1}
+.topbar-right{text-align:right}
+.topbar-date{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.topbar-day{font-size:12px;color:var(--muted2);display:block}
+.sync-btn{background:none;border:1px solid var(--border2);border-radius:8px;color:var(--muted2);font-family:var(--mono);font-size:10px;padding:4px 8px;cursor:pointer;display:flex;align-items:center;gap:4px;margin-top:4px;transition:all 0.2s}
+.sync-btn:hover{border-color:var(--accent3);color:var(--accent3)}
+.sync-btn.syncing{border-color:var(--accent5);color:var(--accent5);animation:pulseSpin 1s infinite}
+.sync-btn.ok{border-color:var(--accent3);color:var(--accent3)}
+.sync-btn.err{border-color:var(--accent4);color:var(--accent4)}
+@keyframes pulseSpin{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:100;background:rgba(10,10,15,0.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;padding-bottom:calc(var(--safe-bottom)+4px)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 6px;background:none;border:none;cursor:pointer;color:var(--muted);font-family:var(--body);font-size:10px;transition:color 0.2s}
+.nav-btn.active{color:var(--accent)}
+.nav-btn svg{width:22px;height:22px}
+
+/* PAGES */
+.page{display:none;padding:16px 16px 90px;animation:fadeIn 0.25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* SETUP BANNER */
+.setup-banner{background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(77,171,247,0.1));border:1px solid rgba(124,58,237,0.4);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.setup-title{font-family:var(--display);font-size:20px;letter-spacing:1px;color:var(--blue);margin-bottom:8px}
+.setup-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:var(--mono);font-size:12px;padding:10px 12px;outline:none;transition:border-color 0.2s;margin-bottom:8px}
+.setup-input:focus{border-color:var(--accent)}
+.setup-input::placeholder{color:var(--muted)}
+.btn-primary{background:var(--accent);color:#000;border:none;border-radius:10px;font-weight:700;font-size:14px;padding:12px 20px;cursor:pointer;font-family:var(--mono);width:100%;letter-spacing:1px;transition:opacity 0.2s}
+.btn-primary:hover{opacity:0.9}
+.btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border2);border-radius:10px;font-size:12px;padding:10px 16px;cursor:pointer;font-family:var(--mono);width:100%;text-align:center;margin-top:6px}
+
+/* SECTION TITLE */
+.section-title{font-family:var(--display);font-size:13px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;margin-top:20px}
+.section-title:first-child{margin-top:0}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.card-row{display:flex;gap:10px;margin-bottom:10px}
+.card-row:last-child{margin-bottom:0}
+
+/* SCORE RING */
+.score-container{display:flex;flex-direction:column;align-items:center;padding:24px 20px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;position:relative;overflow:hidden}
+.score-container::before{content:'';position:absolute;top:-40px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(232,255,71,0.06) 0%,transparent 70%);pointer-events:none}
+.ring-wrap{position:relative;width:150px;height:150px;margin-bottom:14px}
+.ring-svg{width:150px;height:150px;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:10}
+.ring-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(0.34,1.56,0.64,1)}
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.ring-score{font-family:var(--display);font-size:48px;line-height:1}
+.ring-label{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.ring-source{font-size:9px;color:var(--muted);font-family:var(--mono);margin-top:1px;opacity:0.6}
+.score-row{display:flex;gap:16px}
+.score-mini{text-align:center}
+.score-mini-val{font-family:var(--mono);font-size:16px;font-weight:700}
+.score-mini-lab{font-size:9px;color:var(--muted);margin-top:2px;font-family:var(--mono);letter-spacing:0.5px}
+
+/* METRIC GRID */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.metric-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px;position:relative;overflow:hidden;cursor:pointer;transition:border-color 0.2s}
+.metric-tile:hover{border-color:var(--border2)}
+.metric-tile::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
+.mt-sleep::after{background:var(--blue)} .mt-hrv::after{background:var(--accent3)} .mt-hr::after{background:var(--accent4)}
+.mt-steps::after{background:var(--orange)} .mt-stress::after{background:var(--pink)} .mt-weight::after{background:var(--accent)}
+.mt-calories::after{background:var(--accent5)} .mt-spo2::after{background:var(--blue)} .mt-active::after{background:var(--accent3)}
+.mt-deep::after{background:var(--accent2)}
+.metric-source{position:absolute;top:8px;right:8px;width:6px;height:6px;border-radius:50%}
+.metric-source.auto{background:var(--accent3);box-shadow:0 0 6px var(--accent3)}
+.metric-source.manual{background:var(--muted);opacity:0.5}
+.metric-icon{font-size:16px;margin-bottom:6px}
+.metric-val{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1}
+.metric-unit{font-size:11px;color:var(--muted2);margin-left:2px}
+.metric-lab{font-size:11px;color:var(--muted);margin-top:4px;font-family:var(--mono)}
+.metric-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* SLEEP BREAKDOWN */
+.sleep-stages{display:flex;gap:6px;margin-top:10px}
+.stage-bar-wrap{flex:1;text-align:center}
+.stage-bar-bg{height:40px;background:var(--bg3);border-radius:6px;position:relative;overflow:hidden;margin-bottom:4px}
+.stage-bar-fill{position:absolute;bottom:0;left:0;right:0;border-radius:6px;transition:height 0.8s ease}
+.stage-label{font-size:9px;color:var(--muted);font-family:var(--mono)}
+.stage-val{font-size:11px;font-family:var(--mono);font-weight:700;margin-top:1px}
+
+/* BADGE */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-family:var(--mono);letter-spacing:0.5px;font-weight:700}
+.badge-green{background:rgba(6,214,160,0.15);color:var(--accent3)}
+.badge-yellow{background:rgba(232,255,71,0.15);color:var(--accent)}
+.badge-red{background:rgba(255,107,107,0.15);color:var(--accent4)}
+.badge-orange{background:rgba(255,165,29,0.15);color:var(--accent5)}
+.badge-blue{background:rgba(77,171,247,0.15);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,0.15);color:#a78bfa}
+
+/* DAY BANNER */
+.day-banner{background:linear-gradient(135deg,var(--card2) 0%,rgba(124,58,237,0.2) 100%);border:1px solid rgba(124,58,237,0.3);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.day-banner-title{font-family:var(--display);font-size:22px;color:var(--text);letter-spacing:1px}
+.day-banner-sub{font-size:12px;color:var(--muted2);margin-top:2px;font-family:var(--mono)}
+
+/* IF CARD */
+.if-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.if-windows{display:flex;gap:10px;margin-top:10px}
+.if-win{flex:1;padding:10px;background:var(--card2);border-radius:10px;text-align:center}
+.if-win-label{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.5px}
+.if-win-val{font-family:var(--mono);font-size:14px;font-weight:700;margin-top:4px}
+
+/* HABITS */
+.habit-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:10px;background:var(--card2);margin-bottom:6px;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
+.habit-row.checked{border-color:rgba(232,255,71,0.2);background:rgba(232,255,71,0.05)}
+.habit-left{display:flex;align-items:center;gap:10px}
+.habit-icon{font-size:18px;width:28px}
+.habit-name{font-size:13px;font-weight:500}
+.habit-desc{font-size:11px;color:var(--muted);margin-top:1px}
+.habit-check{width:26px;height:26px;border-radius:8px;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.2s}
+.habit-row.checked .habit-check{border-color:var(--accent);background:var(--accent);color:#000}
+
+/* TIMELINE */
+.timeline{position:relative}
+.tl-item{display:flex;gap:12px;margin-bottom:2px;padding:10px 12px;border-radius:var(--r2);cursor:pointer;transition:background 0.15s}
+.tl-item:hover{background:rgba(255,255,255,0.03)}
+.tl-item.active-now{background:rgba(232,255,71,0.06)}
+.tl-time{font-family:var(--mono);font-size:11px;color:var(--muted);width:42px;flex-shrink:0;padding-top:2px}
+.tl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.tl-dot-done{background:var(--accent3)} .tl-dot-now{background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 1.5s infinite} .tl-dot-future{background:var(--muted);opacity:0.4}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.tl-title{font-size:13px;font-weight:500}
+.tl-desc{font-size:11px;color:var(--muted2);margin-top:2px}
+.tl-tag{font-family:var(--mono);font-size:10px;margin-top:3px}
+.tl-sep{height:1px;background:var(--border);margin:4px 12px}
+
+/* WEEK STRIP */
+.week-strip{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.week-strip::-webkit-scrollbar{display:none}
+.week-day{flex-shrink:0;width:48px;border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:var(--card);border:1px solid var(--border);transition:all 0.2s}
+.week-day.today{background:var(--accent);border-color:var(--accent)}
+.week-day.today .wd-name,.week-day.today .wd-num{color:#000}
+.week-day.selected{border-color:var(--accent)}
+.wd-name{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.5px}
+.week-day.today .wd-name{color:rgba(0,0,0,0.6)}
+.wd-num{font-family:var(--display);font-size:20px;color:var(--text);line-height:1.2}
+.wd-dot{width:5px;height:5px;border-radius:50%;margin:4px auto 0}
+.wd-dot-gym{background:var(--accent4)} .wd-dot-run{background:var(--accent3)} .wd-dot-rest{background:var(--muted);opacity:0.3}
+
+/* MEALS */
+.meal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.meal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.meal-title{font-family:var(--display);font-size:18px;letter-spacing:1px}
+.meal-time{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.meal-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.meal-item:last-child{border-bottom:none;padding-bottom:0}
+.meal-item-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.meal-item-name{flex:1;font-size:13px}
+.meal-item-qty{font-family:var(--mono);font-size:11px;color:var(--muted2)}
+.meal-macros{display:flex;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.macro{text-align:center;flex:1}
+.macro-val{font-family:var(--mono);font-size:15px;font-weight:700}
+.macro-lab{font-size:10px;color:var(--muted);margin-top:1px}
+.macro-P{color:var(--accent4)} .macro-C{color:var(--blue)} .macro-F{color:var(--accent5)}
+
+/* SUPPLEMENTS */
+.supp-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--card2);margin-bottom:6px;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
+.supp-row.checked{border-color:rgba(6,214,160,0.3);background:rgba(6,214,160,0.06)}
+.supp-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;font-size:12px}
+.supp-row.checked .supp-check{border-color:var(--accent3);background:var(--accent3)}
+.supp-name{flex:1;font-size:13px;font-weight:500}
+.supp-time{font-family:var(--mono);font-size:10px;color:var(--muted)}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:14px;background:var(--card);border-radius:10px;padding:4px}
+.tab-btn{flex:1;padding:7px 4px;border-radius:7px;border:none;background:none;color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px}
+.tab-btn.active{background:var(--accent);color:#000;font-weight:700}
+
+/* CHART */
+.chart-bar-wrap{display:flex;align-items:flex-end;gap:4px;height:60px;margin-top:10px}
+.chart-bar{flex:1;border-radius:4px 4px 0 0;min-height:4px;transition:height 0.5s ease}
+.chart-labels{display:flex;gap:4px;margin-top:4px}
+.chart-label{flex:1;text-align:center;font-family:var(--mono);font-size:9px;color:var(--muted)}
+
+/* WORKOUT BLOCK */
+.workout-block{background:linear-gradient(135deg,var(--card2),rgba(255,107,107,0.08));border:1px solid rgba(255,107,107,0.2);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.wb-title{font-family:var(--display);font-size:24px;letter-spacing:1px;color:var(--accent4)}
+.exercise-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.exercise-item:last-child{border-bottom:none}
+.ex-num{font-family:var(--mono);font-size:11px;color:var(--muted);width:18px}
+.ex-name{flex:1;font-size:13px;font-weight:500}
+.ex-sets{font-family:var(--mono);font-size:12px;color:var(--muted2)}
+
+/* ALERT */
+.alert{border-radius:var(--r2);padding:12px 14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:10px}
+.alert-accent{background:rgba(232,255,71,0.08);border:1px solid rgba(232,255,71,0.2)}
+.alert-blue{background:rgba(77,171,247,0.08);border:1px solid rgba(77,171,247,0.2)}
+.alert-green{background:rgba(6,214,160,0.08);border:1px solid rgba(6,214,160,0.2)}
+.alert-icon{font-size:16px;flex-shrink:0}
+.alert-text{font-size:12px;color:var(--muted2);line-height:1.5}
+
+/* PROGRESS BAR */
+.prog-bar{background:rgba(255,255,255,0.06);border-radius:4px;height:6px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;border-radius:4px;transition:width 0.5s ease}
+
+/* NOTES */
+.note-input{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:var(--body);font-size:14px;padding:12px;outline:none;resize:none;transition:border-color 0.2s;height:80px}
+.note-input:focus{border-color:var(--accent)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex;align-items:flex-end;justify-content:center}
+.modal{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 20px calc(var(--safe-bottom)+20px);width:100%;max-width:430px;border-top:1px solid var(--border);max-height:80vh;overflow-y:auto}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-family:var(--display);font-size:22px;letter-spacing:1px;margin-bottom:14px}
+.metric-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:14px;padding:10px 12px;outline:none;transition:border-color 0.2s;margin-bottom:10px}
+.metric-input:focus{border-color:var(--accent)}
+
+/* WEEK OVERVIEW TRAIN */
+.week-overview-train{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px}
+.wo-day{border-radius:8px;padding:8px 4px;text-align:center;background:var(--card);border:1px solid var(--border)}
+.wo-day.today{border-color:var(--accent);background:rgba(232,255,71,0.08)}
+.wo-label{font-family:var(--mono);font-size:9px;color:var(--muted)}
+.wo-icon{font-size:16px;margin:4px 0}
+.wo-tag{font-size:8px;color:var(--muted);font-family:var(--mono)}
+
+/* LIVE INDICATOR */
+.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent3);margin-right:5px;animation:pulse 2s infinite}
+.sync-status{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;padding:6px;margin-bottom:10px}
+
+::-webkit-scrollbar{width:0}
+.fade-stagger>*{opacity:0;animation:fadeIn 0.3s ease forwards}
+.fade-stagger>*:nth-child(1){animation-delay:.05s}.fade-stagger>*:nth-child(2){animation-delay:.1s}
+.fade-stagger>*:nth-child(3){animation-delay:.15s}.fade-stagger>*:nth-child(4){animation-delay:.2s}
+.fade-stagger>*:nth-child(5){animation-delay:.25s}.fade-stagger>*:nth-child(6){animation-delay:.3s}
+.fade-stagger>*:nth-child(7){animation-delay:.35s}.fade-stagger>*:nth-child(8){animation-delay:.4s}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">IRON</div>
+  <div class="topbar-right">
+    <div class="topbar-day" id="topbar-day"></div>
+    <div class="topbar-date" id="topbar-date"></div>
+    <button class="sync-btn" id="sync-btn" onclick="syncNow()">
+      <span id="sync-icon">↻</span> <span id="sync-label">SYNC</span>
+    </button>
+  </div>
+</div>
+
+<!-- PAGE: DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="fade-stagger">
+
+    <!-- Setup Banner (shown until URL configured) -->
+    <div class="setup-banner" id="setup-banner" style="display:none">
+      <div class="setup-title">CONFIGURAR GOOGLE SHEETS</div>
+      <div style="font-size:12px;color:var(--muted2);margin-bottom:10px;line-height:1.6">Cola aqui o URL da tua Google Apps Script Web App para activar a sincronização automática com Samsung Health via Google Fit.</div>
+      <input class="setup-input" id="sheets-url-input" type="url" placeholder="https://script.google.com/macros/s/AK.../exec">
+      <button class="btn-primary" onclick="saveSheetUrl()">ACTIVAR INTEGRAÇÃO</button>
+      <button class="btn-secondary" onclick="dismissSetup()">Usar modo manual por agora</button>
+    </div>
+
+    <!-- Day Banner -->
+    <div class="day-banner" id="day-banner">
+      <div>
+        <div class="day-banner-title" id="day-type-title">—</div>
+        <div class="day-banner-sub" id="day-type-sub">—</div>
+      </div>
+      <div id="day-badge"></div>
+    </div>
+
+    <!-- Score Ring -->
+    <div class="score-container">
+      <div class="ring-wrap">
+        <svg class="ring-svg" viewBox="0 0 150 150">
+          <circle class="ring-bg" cx="75" cy="75" r="62"/>
+          <circle class="ring-fill" id="ring-fill" cx="75" cy="75" r="62"
+            stroke="#e8ff47" stroke-dasharray="389.6" stroke-dashoffset="389.6"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-score" id="ring-score" style="color:var(--accent)">—</div>
+          <div class="ring-label">PRONTIDÃO</div>
+          <div class="ring-source" id="ring-source">Samsung Health</div>
+        </div>
+      </div>
+      <div class="score-row">
+        <div class="score-mini">
+          <div class="score-mini-val" style="color:var(--blue)" id="dash-sleep">—</div>
+          <div class="score-mini-lab">SONO</div>
+        </div>
+        <div class="score-mini">
+          <div class="score-mini-val" style="color:var(--accent3)" id="dash-hrv">—</div>
+          <div class="score-mini-lab">VFC</div>
+        </div>
+        <div class="score-mini">
+          <div class="score-mini-val" style="color:var(--accent4)" id="dash-hr">—</div>
+          <div class="score-mini-lab">FC REST</div>
+        </div>
+        <div class="score-mini">
+          <div class="score-mini-val" style="color:var(--orange)" id="dash-steps">—</div>
+          <div class="score-mini-lab">PASSOS</div>
+        </div>
+        <div class="score-mini">
+          <div class="score-mini-val" style="color:var(--blue)" id="dash-spo2">—</div>
+          <div class="score-mini-lab">SpO₂</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sync status -->
+    <div class="sync-status" id="sync-status">
+      <span class="live-dot"></span><span id="last-sync-text">A aguardar sync...</span>
+    </div>
+
+    <!-- Metrics Grid -->
+    <div class="section-title">MÉTRICAS · SAMSUNG HEALTH</div>
+    <div class="metric-grid">
+
+      <div class="metric-tile mt-sleep" onclick="openMetricModal('sleep_duration_min')">
+        <div class="metric-source auto" id="src-sleep" title="Auto"></div>
+        <div class="metric-icon">🌙</div>
+        <div><span class="metric-val" id="m-sleep">—</span><span class="metric-unit">h</span></div>
+        <div class="metric-lab">TEMPO SONO</div>
+        <div class="metric-sub" id="m-sleep-sub">Pontuação Sono</div>
+      </div>
+
+      <div class="metric-tile mt-hrv" onclick="openMetricModal('hrv_avg')">
+        <div class="metric-source auto" id="src-hrv" title="Auto"></div>
+        <div class="metric-icon">💚</div>
+        <div><span class="metric-val" id="m-hrv">—</span><span class="metric-unit">ms</span></div>
+        <div class="metric-lab">VFC SONO</div>
+        <div class="metric-sub" id="m-hrv-sub">durante o sono</div>
+      </div>
+
+      <div class="metric-tile mt-hr" onclick="openMetricModal('heart_rate_resting')">
+        <div class="metric-source auto" id="src-hr" title="Auto"></div>
+        <div class="metric-icon">❤️</div>
+        <div><span class="metric-val" id="m-hr">—</span><span class="metric-unit">bpm</span></div>
+        <div class="metric-lab">FC REPOUSO</div>
+        <div class="metric-sub" id="m-hr-sub">durante o sono</div>
+      </div>
+
+      <div class="metric-tile mt-steps" onclick="openMetricModal('steps')">
+        <div class="metric-source auto" id="src-steps" title="Auto"></div>
+        <div class="metric-icon">👟</div>
+        <div><span class="metric-val" id="m-steps">—</span></div>
+        <div class="metric-lab">PASSOS</div>
+        <div class="metric-sub" id="m-steps-sub">hoje</div>
+      </div>
+
+      <div class="metric-tile mt-spo2" onclick="openMetricModal('spo2_avg')">
+        <div class="metric-source auto" id="src-spo2" title="Auto"></div>
+        <div class="metric-icon">🫁</div>
+        <div><span class="metric-val" id="m-spo2">—</span><span class="metric-unit">%</span></div>
+        <div class="metric-lab">SpO₂ SONO</div>
+        <div class="metric-sub">Oxigénio no sangue</div>
+      </div>
+
+      <div class="metric-tile mt-active" onclick="openMetricModal('active_minutes')">
+        <div class="metric-source auto" id="src-active" title="Auto"></div>
+        <div class="metric-icon">⚡</div>
+        <div><span class="metric-val" id="m-active">—</span><span class="metric-unit">min</span></div>
+        <div class="metric-lab">T. ATIVIDADE</div>
+        <div class="metric-sub" id="m-calories-sub">— kcal activas</div>
+      </div>
+
+      <div class="metric-tile mt-deep" onclick="openMetricModal('sleep_deep_min')">
+        <div class="metric-source auto" id="src-deep" title="Auto"></div>
+        <div class="metric-icon">🔮</div>
+        <div><span class="metric-val" id="m-deep">—</span><span class="metric-unit">min</span></div>
+        <div class="metric-lab">SONO PROFUNDO</div>
+        <div class="metric-sub" id="m-rem-sub">REM: — min</div>
+      </div>
+
+      <div class="metric-tile mt-weight" onclick="openMetricModal('weight_kg')">
+        <div class="metric-source manual" id="src-weight" title="Manual"></div>
+        <div class="metric-icon">⚖️</div>
+        <div><span class="metric-val" id="m-weight">—</span><span class="metric-unit">kg</span></div>
+        <div class="metric-lab">PESO</div>
+        <div class="metric-sub">Toca para inserir</div>
+      </div>
+
+    </div>
+
+    <!-- Sleep Stages -->
+    <div class="section-title">FASES DE SONO</div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div>
+          <span style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--blue)" id="sleep-total-h">—</span>
+          <span style="font-size:12px;color:var(--muted);margin-left:4px">tempo de sono</span>
+        </div>
+        <span id="sleep-rating-badge"></span>
+      </div>
+      <div class="sleep-stages" id="sleep-stages-bars">
+        <div class="stage-bar-wrap">
+          <div class="stage-bar-bg"><div class="stage-bar-fill" id="bar-deep" style="background:var(--accent2);height:0%"></div></div>
+          <div class="stage-label">PROF.</div>
+          <div class="stage-val" id="sv-deep" style="color:var(--accent2)">—</div>
+        </div>
+        <div class="stage-bar-wrap">
+          <div class="stage-bar-bg"><div class="stage-bar-fill" id="bar-rem" style="background:var(--blue);height:0%"></div></div>
+          <div class="stage-label">REM</div>
+          <div class="stage-val" id="sv-rem" style="color:var(--blue)">—</div>
+        </div>
+        <div class="stage-bar-wrap">
+          <div class="stage-bar-bg"><div class="stage-bar-fill" id="bar-light" style="background:var(--muted2);height:0%"></div></div>
+          <div class="stage-label">LEVE</div>
+          <div class="stage-val" id="sv-light" style="color:var(--muted2)">—</div>
+        </div>
+        <div class="stage-bar-wrap">
+          <div class="stage-bar-bg"><div class="stage-bar-fill" id="bar-awake" style="background:var(--accent4);height:0%"></div></div>
+          <div class="stage-label">VIGÍLIA</div>
+          <div class="stage-val" id="sv-awake" style="color:var(--accent4)">—</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        <div><span style="font-family:var(--mono);font-size:12px;color:var(--muted)">INÍCIO: </span><span style="font-family:var(--mono);font-size:12px" id="sleep-start-time">—</span></div>
+        <div><span style="font-family:var(--mono);font-size:12px;color:var(--muted)">FIM: </span><span style="font-family:var(--mono);font-size:12px" id="sleep-end-time">—</span></div>
+      </div>
+    </div>
+
+    <!-- IF Window -->
+    <div class="section-title">JANELA DE JEJUM</div>
+    <div class="if-card">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:1px">PROTOCOLO</div>
+          <div style="font-family:var(--display);font-size:20px;margin-top:2px" id="if-protocol">—</div>
+        </div>
+        <div id="if-badge"></div>
+      </div>
+      <div class="if-windows">
+        <div class="if-win"><div class="if-win-label">JEJUM</div><div class="if-win-val" style="color:var(--accent4)" id="if-fast">—</div></div>
+        <div class="if-win"><div class="if-win-label">ALIMENTAÇÃO</div><div class="if-win-val" style="color:var(--accent3)" id="if-eat">—</div></div>
+        <div class="if-win"><div class="if-win-label">1.º CAFÉ</div><div class="if-win-val" style="color:var(--accent5)" id="if-coffee">—</div></div>
+      </div>
+    </div>
+
+    <!-- Habits -->
+    <div class="section-title">HÁBITOS DO DIA</div>
+    <div id="habits-list"></div>
+
+  </div>
+</div>
+
+<!-- PAGE: SCHEDULE -->
+<div class="page" id="page-schedule">
+  <div class="fade-stagger">
+    <div class="section-title">SEMANA</div>
+    <div class="week-strip" id="week-strip"></div>
+    <div class="section-title" id="sched-day-title">HOJE</div>
+    <div id="schedule-content"></div>
+  </div>
+</div>
+
+<!-- PAGE: NUTRITION -->
+<div class="page" id="page-nutrition">
+  <div class="fade-stagger">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchNutTab('meals',this)">REFEIÇÕES</button>
+      <button class="tab-btn" onclick="switchNutTab('supps',this)">SUPLEMENTOS</button>
+      <button class="tab-btn" onclick="switchNutTab('macro',this)">MACROS</button>
+    </div>
+    <div id="nut-meals">
+      <div class="alert alert-accent"><span class="alert-icon">💡</span><span class="alert-text">Plano adaptado Huberman: timing circadiano proteína, hidratos estratégicos à noite, sem glúten nem lactose.</span></div>
+      <div id="meals-content"></div>
+    </div>
+    <div id="nut-supps" style="display:none">
+      <div class="section-title">MANHÃ</div><div id="supps-morning"></div>
+      <div class="section-title">PÓS-TREINO / TARDE</div><div id="supps-posttrain"></div>
+      <div class="section-title">NOITE</div><div id="supps-night"></div>
+    </div>
+    <div id="nut-macro" style="display:none">
+      <div class="section-title">METAS DIÁRIAS</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div style="font-size:13px;color:var(--muted2)">Calorias totais</div>
+          <div style="font-family:var(--mono);font-size:18px;color:var(--accent)">~2400 kcal</div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--accent4)">● PROTEÍNA</span><span style="font-family:var(--mono);font-size:12px">~150g · 600kcal</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--accent4)"></div></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--blue)">● HIDRATOS</span><span style="font-family:var(--mono);font-size:12px">~300g · 1200kcal</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:55%;background:var(--blue)"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--accent5)">● GORDURAS</span><span style="font-family:var(--mono);font-size:12px">~65g · 585kcal</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:40%;background:var(--accent5)"></div></div>
+        </div>
+      </div>
+      <div class="section-title">REGRAS DO PLANO</div>
+      <div class="card">
+        <div style="font-size:12px;color:var(--muted2);line-height:1.8">
+          ✅ Pesar alimentos <strong style="color:var(--text)">cozinhados</strong><br>
+          ✅ 2 refeições + 3 lanches/dia · Sopa sem batata é livre<br>
+          ✅ Até 450g fruta/dia · 2.9L líquidos/dia<br>
+          ✅ Creatina 5g/dia todos os dias · 7–8h sono<br>
+          ✅ Sem glúten · Sem lactose
+        </div>
+      </div>
+      <div class="section-title">PRIORIDADES HUBERMAN</div>
+      <div class="card">
+        <div style="font-size:12px;color:var(--muted2);line-height:1.8">
+          🫐 Bagas vermelhas diariamente<br>🌿 Curcuma + pimenta preta diariamente<br>
+          🐟 Peixe gordo 3–4x/semana<br>🥚 Proteína no P. Almoço (circadiano)<br>
+          🌙 Hidratos estratégicos à noite<br>☕ Café 90min após acordar
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: TRAINING -->
+<div class="page" id="page-training">
+  <div class="fade-stagger">
+    <div class="section-title">OVERVIEW SEMANAL</div>
+    <div class="week-overview-train" id="week-overview-train"></div>
+    <div id="training-content"></div>
+  </div>
+</div>
+
+<!-- PAGE: PROGRESS -->
+<div class="page" id="page-progress">
+  <div class="fade-stagger">
+    <div class="section-title">7 DIAS · SONO</div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div><div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--blue)" id="avg-sleep">—</div><div style="font-size:11px;color:var(--muted)">média semanal</div></div>
+        <div id="sleep-badge2"></div>
+      </div>
+      <div class="chart-bar-wrap" id="sleep-chart"></div>
+      <div class="chart-labels" id="sleep-chart-labels"></div>
+    </div>
+    <div class="section-title">EVOLUÇÃO DE PESO</div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div><div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--accent)" id="latest-weight">—</div><div style="font-size:11px;color:var(--muted)">último registo</div></div>
+      </div>
+      <div class="chart-bar-wrap" id="weight-chart"></div>
+      <div class="chart-labels" id="weight-chart-labels"></div>
+    </div>
+    <div class="section-title">TREINOS ESTE MÊS</div>
+    <div class="card">
+      <div style="display:flex;gap:16px;align-items:center">
+        <div style="text-align:center"><div style="font-family:var(--display);font-size:40px;color:var(--accent4)" id="gym-count">—</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">GYM</div></div>
+        <div style="text-align:center"><div style="font-family:var(--display);font-size:40px;color:var(--accent3)" id="run-count">—</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">CORRIDAS</div></div>
+        <div style="flex:1">
+          <div style="font-size:11px;color:var(--muted2);margin-bottom:3px">Consistência</div>
+          <div class="prog-bar" style="height:8px"><div class="prog-fill" id="consistency-bar" style="background:var(--accent)"></div></div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:4px" id="consistency-text">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="section-title">DIÁRIO</div>
+    <div class="card">
+      <textarea class="note-input" id="daily-note" placeholder="Como te sentes hoje? Energia, humor, dores, observações..."></textarea>
+      <button class="btn-primary" onclick="saveNote()" style="margin-top:8px">GUARDAR NOTA</button>
+      <div id="saved-notes" style="margin-top:12px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DEFINIÇÕES -->
+<div class="page" id="page-settings">
+  <div class="fade-stagger">
+
+    <div class="section-title">INTEGRAÇÃO SAMSUNG HEALTH</div>
+    <div class="card">
+      <div style="font-family:var(--mono);font-size:12px;color:var(--blue);margin-bottom:8px">⚡ APPS SCRIPT URL</div>
+      <div style="font-size:12px;color:var(--muted2);margin-bottom:12px;line-height:1.6">
+        Cola aqui o URL da tua Google Apps Script Web App.<br>
+        Samsung Health → Health Connect → Health Data Export → Google Sheets → Apps Script → IRON App
+      </div>
+      <input class="setup-input" id="settings-url-input" type="url" placeholder="https://script.google.com/macros/s/.../exec" style="margin-bottom:8px">
+      <button class="btn-primary" onclick="saveSheetUrlFromSettings()">GUARDAR E SINCRONIZAR</button>
+      <div id="settings-current-url" style="margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--muted);word-break:break-all"></div>
+    </div>
+
+    <div class="section-title">ESTADO DA SINCRONIZAÇÃO</div>
+    <div class="card">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:13px;color:var(--muted2)">Último sync</span>
+          <span style="font-family:var(--mono);font-size:12px" id="settings-last-sync">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:13px;color:var(--muted2)">Fonte de dados</span>
+          <span style="font-family:var(--mono);font-size:12px;color:var(--accent3)" id="settings-source">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:13px;color:var(--muted2)">URL configurado</span>
+          <span id="settings-url-status" style="font-family:var(--mono);font-size:12px">—</span>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="syncNow()" style="margin-top:12px">↻ FORÇAR SYNC AGORA</button>
+    </div>
+
+    <div class="section-title">FLUXO DE DADOS</div>
+    <div class="card">
+      <div style="font-size:12px;color:var(--muted2);line-height:2">
+        <span style="color:var(--accent3)">●</span> Galaxy Watch 8<br>
+        <span style="color:var(--muted);margin-left:8px">↓ automático</span><br>
+        <span style="color:var(--accent3)">●</span> Samsung Health<br>
+        <span style="color:var(--muted);margin-left:8px">↓ ativar nas definições</span><br>
+        <span style="color:var(--accent3)">●</span> Health Connect<br>
+        <span style="color:var(--muted);margin-left:8px">↓ Health Data Export app</span><br>
+        <span style="color:var(--accent3)">●</span> Google Sheets<br>
+        <span style="color:var(--muted);margin-left:8px">↓ Apps Script (URL acima)</span><br>
+        <span style="color:var(--accent)">●</span> <strong style="color:var(--accent)">IRON App</strong>
+      </div>
+    </div>
+
+    <div class="section-title">DADOS LOCAIS</div>
+    <div class="card">
+      <div style="font-size:12px;color:var(--muted2);margin-bottom:12px">Apaga todos os dados guardados localmente (métricas manuais, hábitos, notas). Não apaga dados do Samsung Health.</div>
+      <button onclick="clearLocalData()" style="background:rgba(255,107,107,0.1);color:var(--accent4);border:1px solid rgba(255,107,107,0.3);border-radius:10px;padding:10px 16px;font-family:var(--mono);font-size:12px;cursor:pointer;width:100%">APAGAR DADOS LOCAIS</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showPage('dashboard',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>HOJE</button>
+  <button class="nav-btn" onclick="showPage('schedule',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>AGENDA</button>
+  <button class="nav-btn" onclick="showPage('nutrition',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>NUTRIÇÃO</button>
+  <button class="nav-btn" onclick="showPage('training',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4v16M18 4v16M3 9h3M18 9h3M3 15h3M18 15h3M6 9h12M6 15h12"/></svg>TREINO</button>
+  <button class="nav-btn" onclick="showPage('progress',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>PROGRESSO</button>
+  <button class="nav-btn" onclick="showPage('settings',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>CONFIG</button>
+</nav>
+
+</div>
+
+<!-- METRIC MODAL -->
+<div class="modal-overlay" id="metric-modal" onclick="closeMetricModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-title">ATUALIZAR</div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════
+const DAYS_PT    = ['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+const DAYS_FULL  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+const MONTHS_PT  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const TODAY_KEY  = new Date().toISOString().slice(0,10);
+
+const TRAINING_SCHEDULE = {
+  0:{type:'long-run',label:'CORRIDA LONGA',sub:'Domingo — longa distância'},
+  1:{type:'run',label:'CORRIDA',sub:'Segunda — corrida pós-trabalho'},
+  2:{type:'gym',label:'GYM',sub:'Terça — 6:45h treino força'},
+  3:{type:'run',label:'CORRIDA',sub:'Quarta — corrida pós-trabalho'},
+  4:{type:'gym',label:'GYM',sub:'Quinta — 6:45h treino força'},
+  5:{type:'gym',label:'GYM',sub:'Sexta — 6:45h treino força'},
+  6:{type:'rest',label:'RECUPERAÇÃO',sub:'Sábado — descanso ativo'},
+};
+
+const IF_SCHEDULE = {
+  gym:{fast:'22:00–10:00',eat:'10:00–18:00',coffee:'~10:30',protocol:'16:8 JEJUM'},
+  run:{fast:'22:00–10:00',eat:'10:00–20:00',coffee:'~10:30',protocol:'14:10 JEJUM'},
+  'long-run':{fast:'22:00–10:00',eat:'10:00–20:00',coffee:'~10:30',protocol:'14:10 JEJUM'},
+  rest:{fast:'22:00–10:00',eat:'10:00–18:00',coffee:'~10:30',protocol:'16:8 JEJUM'},
+};
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+function loadState(){try{const s=localStorage.getItem('iron_v2');return s?JSON.parse(s):{}}catch{return{}}}
+function saveState(s){try{localStorage.setItem('iron_v2',JSON.stringify(s))}catch{}}
+
+let STATE = loadState();
+if(!STATE.metrics)    STATE.metrics={};
+if(!STATE.habits)     STATE.habits={};
+if(!STATE.notes)      STATE.notes=[];
+if(!STATE.sheetsUrl)  STATE.sheetsUrl='';
+if(!STATE.lastSync)   STATE.lastSync=null;
+if(!STATE.liveData)   STATE.liveData={};  // last fetched from Google Sheets
+
+if(!STATE.metrics[TODAY_KEY]) STATE.metrics[TODAY_KEY]={};
+if(!STATE.habits[TODAY_KEY])  STATE.habits[TODAY_KEY]={};
+
+// ═══════════════════════════════════════
+// METRIC CONFIG  (Samsung Health naming)
+// ═══════════════════════════════════════
+const METRIC_CONFIG = {
+  sleep_duration_min:{title:'TEMPO DE SONO',unit:'min',placeholder:'ex: 450',source:'auto'},
+  sleep_deep_min:    {title:'SONO PROFUNDO',unit:'min',placeholder:'ex: 90',source:'auto'},
+  sleep_rem_min:     {title:'SONO REM',unit:'min',placeholder:'ex: 100',source:'auto'},
+  sleep_light_min:   {title:'SONO LEVE',unit:'min',placeholder:'ex: 200',source:'auto'},
+  sleep_awake_min:   {title:'VIGÍLIA NOTURNA',unit:'min',placeholder:'ex: 20',source:'auto'},
+  sleep_start:       {title:'INÍCIO DO SONO',unit:'HH:mm',placeholder:'ex: 23:15',source:'auto'},
+  sleep_end:         {title:'FIM DO SONO',unit:'HH:mm',placeholder:'ex: 07:00',source:'auto'},
+  hrv_avg:           {title:'VFC (SONO)',unit:'ms',placeholder:'ex: 55',source:'auto'},
+  heart_rate_resting:{title:'FC REPOUSO',unit:'bpm',placeholder:'ex: 58',source:'auto'},
+  heart_rate_avg:    {title:'FC MÉDIA',unit:'bpm',placeholder:'ex: 68',source:'auto'},
+  steps:             {title:'PASSOS',unit:'steps',placeholder:'ex: 8500',source:'auto'},
+  calories_active:   {title:'CALORIAS ACTIVAS',unit:'kcal',placeholder:'ex: 450',source:'auto'},
+  active_minutes:    {title:'TEMPO EM ACTIVIDADE',unit:'min',placeholder:'ex: 45',source:'auto'},
+  spo2_avg:          {title:'SpO₂ (SONO)',unit:'%',placeholder:'ex: 97',source:'auto'},
+  weight_kg:         {title:'PESO',unit:'kg',placeholder:'ex: 76.5',source:'manual'},
+  stress_avg:        {title:'STRESS',unit:'/10',placeholder:'ex: 4',source:'manual'},
+};
+
+// ═══════════════════════════════════════
+// GOOGLE SHEETS SYNC
+// ═══════════════════════════════════════
+async function syncNow(silent=false) {
+  const url = STATE.sheetsUrl;
+  if(!url) {
+    if(!silent) document.getElementById('setup-banner').style.display='block';
+    return;
+  }
+  setSyncState('syncing');
+  try {
+    const r = await fetch(url + '?action=getData&days=7', {cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+
+    if(data.error) throw new Error(data.error);
+
+    // Store live data
+    STATE.liveData = data;
+    STATE.lastSync = new Date().toISOString();
+
+    // Merge today's data into metrics (auto fields only)
+    const today = data.today || {};
+    const m = STATE.metrics[TODAY_KEY];
+    const autoFields = Object.keys(METRIC_CONFIG).filter(k=>METRIC_CONFIG[k].source==='auto');
+    autoFields.forEach(k => { if(today[k] !== undefined && today[k] !== '') m[k] = today[k]; });
+
+    saveState(STATE);
+    setSyncState('ok');
+    updateAllDisplays();
+    if(!silent) showToast('✅ Sincronizado com Samsung Health');
+  } catch(err) {
+    setSyncState('err');
+    if(!silent) showToast('❌ Erro: ' + err.message);
+    console.error('Sync error:', err);
+  }
+}
+
+function setSyncState(state) {
+  const btn   = document.getElementById('sync-btn');
+  const icon  = document.getElementById('sync-icon');
+  const label = document.getElementById('sync-label');
+  const txt   = document.getElementById('last-sync-text');
+  btn.className = 'sync-btn ' + state;
+  if(state==='syncing') { icon.textContent='↻'; label.textContent='SYNC...'; }
+  else if(state==='ok') {
+    icon.textContent='✓'; label.textContent='SYNC';
+    const t = STATE.lastSync ? new Date(STATE.lastSync) : null;
+    if(t) txt.textContent = 'Actualizado ' + t.getHours().toString().padStart(2,'0') + ':' + t.getMinutes().toString().padStart(2,'0');
+  }
+  else if(state==='err') { icon.textContent='✗'; label.textContent='ERRO'; txt.textContent='Falha na sincronização'; }
+  else { icon.textContent='↻'; label.textContent='SYNC'; }
+}
+
+function saveSheetUrl() {
+  const url = document.getElementById('sheets-url-input').value.trim();
+  if(!url || !url.startsWith('https://script.google.com')) {
+    showToast('❌ URL inválido — deve começar com https://script.google.com');
+    return;
+  }
+  STATE.sheetsUrl = url;
+  saveState(STATE);
+  document.getElementById('setup-banner').style.display='none';
+  syncNow();
+}
+
+function dismissSetup() {
+  document.getElementById('setup-banner').style.display='none';
+}
+
+// ═══════════════════════════════════════
+// DISPLAY UPDATES
+// ═══════════════════════════════════════
+function updateAllDisplays() {
+  updateMetricDisplay();
+  updateReadiness();
+  updateSleepStages();
+  updateSyncStatus();
+}
+
+function getM(key) {
+  return STATE.metrics[TODAY_KEY]?.[key];
+}
+
+function updateMetricDisplay() {
+  const m = STATE.metrics[TODAY_KEY] || {};
+  const set = (id, val, suffix='') => {
+    const el=document.getElementById(id);
+    if(el) el.textContent = (val!==undefined && val!=='' && val!==null) ? val+suffix : '—';
+  };
+
+  // Sleep
+  const sleepMin = parseFloat(m.sleep_duration_min);
+  if(sleepMin > 0) {
+    const h = Math.floor(sleepMin/60), mn = sleepMin%60;
+    set('m-sleep', h + (mn>0?'.'+Math.round(mn/6):''));
+    set('sleep-total-h', h+'h '+(mn>0?mn+'min':''));
+  }
+
+  set('m-hrv', m.hrv_avg ? Math.round(m.hrv_avg) : undefined);
+  set('m-hr', m.heart_rate_resting || m.heart_rate_min ? Math.round(m.heart_rate_resting || m.heart_rate_min) : undefined);
+  set('m-steps', m.steps ? Number(m.steps).toLocaleString('pt-PT') : undefined);
+  set('m-spo2', m.spo2_avg ? Math.round(m.spo2_avg) : undefined);
+  set('m-active', m.active_minutes ? Math.round(m.active_minutes) : undefined);
+  set('m-deep', m.sleep_deep_min ? Math.round(m.sleep_deep_min) : undefined);
+  set('m-weight', m.weight_kg);
+  set('m-calories-sub', m.calories_active ? Math.round(m.calories_active)+' kcal activas' : '— kcal activas');
+  set('m-rem-sub', m.sleep_rem_min ? 'REM: '+Math.round(m.sleep_rem_min)+' min' : 'REM: —');
+  set('sleep-start-time', m.sleep_start || '—');
+  set('sleep-end-time', m.sleep_end || '—');
+
+  // Top mini row
+  set('dash-sleep', sleepMin>0 ? Math.floor(sleepMin/60)+'h'+(sleepMin%60>0?Math.round(sleepMin%60)+'m':'') : undefined);
+  set('dash-hrv',   m.hrv_avg   ? Math.round(m.hrv_avg)+'ms'  : undefined);
+  set('dash-hr',    m.heart_rate_resting ? Math.round(m.heart_rate_resting)+'bpm' : undefined);
+  set('dash-steps', m.steps ? (Number(m.steps)>=1000 ? (Number(m.steps)/1000).toFixed(1)+'k' : m.steps) : undefined);
+  set('dash-spo2',  m.spo2_avg  ? Math.round(m.spo2_avg)+'%'  : undefined);
+
+  // Source dots
+  const hasLive = STATE.sheetsUrl && STATE.lastSync;
+  ['sleep','hrv','hr','steps','spo2','active','deep'].forEach(id => {
+    const el=document.getElementById('src-'+id);
+    if(el) { el.className='metric-source '+(hasLive?'auto':'manual'); el.title=hasLive?'Samsung Health auto':'Manual'; }
+  });
+}
+
+function updateReadiness() {
+  const m = STATE.metrics[TODAY_KEY] || {};
+  let score=0, count=0;
+
+  const sleepMin = parseFloat(m.sleep_duration_min);
+  if(sleepMin>0) { score += sleepMin>=450?100:sleepMin>=390?85:sleepMin>=360?65:40; count++; }
+
+  const hrv = parseFloat(m.hrv_avg);
+  if(hrv>0) { score += hrv>=70?100:hrv>=50?80:hrv>=35?60:35; count++; }
+
+  const hr = parseFloat(m.heart_rate_resting || m.heart_rate_min);
+  if(hr>0) { score += hr<=48?100:hr<=55?88:hr<=62?75:55; count++; }
+
+  const spo2 = parseFloat(m.spo2_avg);
+  if(spo2>0) { score += spo2>=97?100:spo2>=95?80:spo2>=93?55:30; count++; }
+
+  const deep = parseFloat(m.sleep_deep_min);
+  if(deep>0) { score += deep>=90?100:deep>=60?80:deep>=30?55:30; count++; }
+
+  if(count===0) { document.getElementById('ring-score').textContent='—'; return; }
+
+  const final = Math.round(score/count);
+  const el = document.getElementById('ring-score');
+  el.textContent = final;
+  const color = final>=85?'var(--accent3)':final>=70?'var(--accent)':final>=55?'var(--accent5)':'var(--accent4)';
+  el.style.color = color;
+  document.getElementById('ring-fill').style.stroke = color;
+  const circumference = 389.6;
+  setTimeout(()=>{ document.getElementById('ring-fill').style.strokeDashoffset = circumference - (final/100)*circumference; },100);
+
+  // Source note
+  const hasLive = STATE.sheetsUrl && STATE.lastSync;
+  document.getElementById('ring-source').textContent = hasLive ? '● Samsung Health' : '○ inserção manual';
+}
+
+function updateSleepStages() {
+  const m = STATE.metrics[TODAY_KEY] || {};
+  const deep  = parseFloat(m.sleep_deep_min)  || 0;
+  const rem   = parseFloat(m.sleep_rem_min)   || 0;
+  const light = parseFloat(m.sleep_light_min) || 0;
+  const awake = parseFloat(m.sleep_awake_min) || 0;
+  const total = deep + rem + light + awake || 1;
+
+  const setBar = (id, val, total) => {
+    const el=document.getElementById(id);
+    if(el) el.style.height = Math.round((val/total)*100)+'%';
+  };
+  setBar('bar-deep',  deep,  total);
+  setBar('bar-rem',   rem,   total);
+  setBar('bar-light', light, total);
+  setBar('bar-awake', awake, total);
+
+  const sv = (id, val) => { const el=document.getElementById(id); if(el) el.textContent = val>0 ? val+'m' : '—'; };
+  sv('sv-deep',  deep);  sv('sv-rem',rem); sv('sv-light',light); sv('sv-awake',awake);
+
+  const sleepMin = parseFloat(m.sleep_duration_min)||0;
+  let badge='', badgeClass='';
+  if(sleepMin>=420){badge='✅ Óptimo';badgeClass='badge-green';}
+  else if(sleepMin>=360){badge='⚠️ OK';badgeClass='badge-yellow';}
+  else if(sleepMin>0){badge='❌ Insuficiente';badgeClass='badge-red';}
+  const badgeEl=document.getElementById('sleep-rating-badge');
+  if(badgeEl) badgeEl.innerHTML = badge?`<span class="badge ${badgeClass}">${badge}</span>`:'';
+}
+
+function updateSyncStatus() {
+  const t = STATE.lastSync ? new Date(STATE.lastSync) : null;
+  const el = document.getElementById('last-sync-text');
+  if(el) {
+    if(t) el.textContent = 'Samsung Health · atualizado às ' + t.getHours().toString().padStart(2,'0')+':'+t.getMinutes().toString().padStart(2,'0');
+    else if(STATE.sheetsUrl) el.textContent = 'Samsung Health · a aguardar sync...';
+    else el.textContent = 'Modo manual · configura Google Sheets para auto-sync';
+  }
+}
+
+// ═══════════════════════════════════════
+// METRIC MODAL (manual override)
+// ═══════════════════════════════════════
+let currentMetric = null;
+function openMetricModal(key) {
+  currentMetric = key;
+  const cfg = METRIC_CONFIG[key] || {title:key,unit:'',placeholder:''};
+  const current = getM(key) || '';
+  const isAuto = cfg.source==='auto' && STATE.sheetsUrl;
+  document.getElementById('modal-title').textContent = cfg.title;
+  document.getElementById('modal-body').innerHTML = `
+    ${isAuto ? `<div class="alert alert-green" style="margin-bottom:12px"><span class="alert-icon">⚡</span><span class="alert-text">Esta métrica é sincronizada automaticamente do Samsung Health. Podes inserir manualmente para substituir.</span></div>` : ''}
+    <label style="font-size:12px;color:var(--muted);font-family:var(--mono);display:block;margin-bottom:6px">VALOR (${cfg.unit})</label>
+    <input type="${cfg.unit==='HH:mm'?'time':'number'}" class="metric-input" id="modal-input" value="${current}" placeholder="${cfg.placeholder}" step="0.1">
+    <button class="btn-primary" onclick="saveMetric()">GUARDAR</button>
+    <button class="btn-secondary" onclick="closeMetricModal()">CANCELAR</button>
+  `;
+  document.getElementById('metric-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-input')?.focus(),100);
+}
+
+function saveMetric() {
+  const val = document.getElementById('modal-input').value;
+  if(!STATE.metrics[TODAY_KEY]) STATE.metrics[TODAY_KEY]={};
+  STATE.metrics[TODAY_KEY][currentMetric] = val;
+  saveState(STATE);
+  closeMetricModal();
+  updateAllDisplays();
+}
+
+function closeMetricModal(e) {
+  if(e && e.target!==document.getElementById('metric-modal')) return;
+  document.getElementById('metric-modal').classList.remove('open');
+}
+
+// ═══════════════════════════════════════
+// HABITS
+// ═══════════════════════════════════════
+const HABITS = [
+  {id:'sunlight',icon:'☀️',name:'Luz solar matinal',desc:'5–10 min ao acordar (circadiano)'},
+  {id:'coffee',icon:'☕',name:'Café adiado 90min',desc:'Não beber café logo ao acordar'},
+  {id:'creatine',icon:'⚗️',name:'Creatina 5g',desc:'Todos os dias, sem exceção'},
+  {id:'water',icon:'💧',name:'2.9L água',desc:'Meta diária de hidratação'},
+  {id:'nsdr',icon:'🧘',name:'NSDR / Yoga Nidra',desc:'10–20 min pós-almoço'},
+  {id:'glasses',icon:'🕶️',name:'Óculos luz vermelha',desc:'A partir das 21h'},
+  {id:'mealprep',icon:'🥘',name:'Meal prep feito',desc:'Só ao domingo'},
+];
+
+function renderHabits() {
+  const today = STATE.habits[TODAY_KEY]||{};
+  document.getElementById('habits-list').innerHTML = HABITS.map(h => {
+    const checked = today[h.id]?'checked':'';
+    return `<div class="habit-row ${checked}" onclick="toggleHabit('${h.id}',this)">
+      <div class="habit-left"><div class="habit-icon">${h.icon}</div>
+        <div><div class="habit-name">${h.name}</div><div class="habit-desc">${h.desc}</div></div>
+      </div>
+      <div class="habit-check">${checked?'✓':''}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleHabit(id, el) {
+  if(!STATE.habits[TODAY_KEY]) STATE.habits[TODAY_KEY]={};
+  STATE.habits[TODAY_KEY][id] = !STATE.habits[TODAY_KEY][id];
+  saveState(STATE);
+  el.classList.toggle('checked');
+  el.querySelector('.habit-check').textContent = STATE.habits[TODAY_KEY][id]?'✓':'';
+}
+
+// ═══════════════════════════════════════
+// SCHEDULE
+// ═══════════════════════════════════════
+const SCHEDULES = {
+  gym:[
+    {time:'06:00',title:'Acordar',desc:'5–10 min luz solar, sem café ainda',tag:'☀️',cat:'morning'},
+    {time:'06:45',title:'🏋️ GYM — TREINO',desc:'Sessão força · 60–75 min',tag:'FORÇA',cat:'gym'},
+    {time:'08:00',title:'Pós-treino',desc:'Whey Vegan + Creatina 5g',tag:'🥤',cat:'nutrition'},
+    {time:'09:00',title:'☕ 1.º CAFÉ',desc:'Com L-Teanina 200mg (90min após acordar)',tag:'CAFÉ',cat:'nutrition'},
+    {time:'09:30',title:'Deslocação trabalho',desc:'~35 minutos',tag:'🚗',cat:'work'},
+    {time:'10:00',title:'Suplementos manhã',desc:"Lion's Mane + Omega-3 + Multi + B12",tag:'💊',cat:'supps'},
+    {time:'13:00',title:'🍽️ Almoço',desc:'Refeição longe treino · ver plano',tag:'REFEIÇÃO',cat:'nutrition'},
+    {time:'13:30',title:'NSDR / Yoga Nidra',desc:'10–20 min · foco & recuperação',tag:'🧘',cat:'recovery'},
+    {time:'16:00',title:'Lanche',desc:'Snack estratégico · ver opções',tag:'🥚',cat:'nutrition'},
+    {time:'19:00',title:'🍽️ Jantar',desc:'Refeição com hidratos noturnos',tag:'REFEIÇÃO',cat:'nutrition'},
+    {time:'21:00',title:'Suplementos noite',desc:'Magnésio + Colágeno + Ashwagandha',tag:'💊',cat:'supps'},
+    {time:'21:00',title:'Óculos luz vermelha',desc:'Bloquear luz azul para melatonina',tag:'🕶️',cat:'recovery'},
+    {time:'23:00',title:'Dormir',desc:'Meta: 7–8h de sono',tag:'🌙',cat:'sleep'},
+  ],
+  run:[
+    {time:'07:00',title:'Acordar',desc:'5–10 min luz solar',tag:'☀️',cat:'morning'},
+    {time:'07:30',title:'☕ Café',desc:'Com L-Teanina (90min após acordar)',tag:'CAFÉ',cat:'nutrition'},
+    {time:'08:00',title:'Trabalho',desc:'Início do dia',tag:'💼',cat:'work'},
+    {time:'10:00',title:'Suplementos manhã',desc:"Lion's Mane + Omega-3 + Multi + B12",tag:'💊',cat:'supps'},
+    {time:'10:00',title:'🍽️ 1.ª Refeição',desc:'Quebrar jejum · proteína + fruta',tag:'REFEIÇÃO',cat:'nutrition'},
+    {time:'13:00',title:'🍽️ Almoço',desc:'Refeição longe treino',tag:'REFEIÇÃO',cat:'nutrition'},
+    {time:'13:30',title:'NSDR',desc:'10–20 min · foco & recuperação',tag:'🧘',cat:'recovery'},
+    {time:'16:30',title:'Pré-corrida',desc:'Banana + proteína leve 1h antes',tag:'🍌',cat:'nutrition'},
+    {time:'17:30',title:'🏃 CORRIDA',desc:'Treino corrida · pós-trabalho',tag:'CARDIO',cat:'run'},
+    {time:'18:30',title:'Pós-corrida',desc:'Whey + Creatina 5g imediato',tag:'🥤',cat:'nutrition'},
+    {time:'20:00',title:'🍽️ Jantar',desc:'Refeição perto treino · hidratos estratégicos',tag:'REFEIÇÃO',cat:'nutrition'},
+    {time:'21:00',title:'Suplementos noite',desc:'Magnésio + Colágeno + Ashwagandha',tag:'💊',cat:'supps'},
+    {time:'21:00',title:'Óculos luz vermelha',desc:'Bloqueio luz azul',tag:'🕶️',cat:'recovery'},
+    {time:'23:30',title:'Dormir',desc:'Meta: 7–8h sono',tag:'🌙',cat:'sleep'},
+  ],
+  'long-run':[
+    {time:'07:30',title:'Acordar',desc:'Luz solar + hidratação',tag:'☀️',cat:'morning'},
+    {time:'08:00',title:'☕ Café + suplementos',desc:'Pré-corrida longa',tag:'CAFÉ',cat:'nutrition'},
+    {time:'09:00',title:'🏃 CORRIDA LONGA',desc:'Long run · ritmo confortável Z2',tag:'LONG RUN',cat:'run'},
+    {time:'11:00',title:'Recuperação',desc:'Whey + Creatina + hidratação',tag:'🥤',cat:'nutrition'},
+    {time:'12:00',title:'Meal Prep semanal',desc:'Preparar refeições para a semana',tag:'🥘',cat:'work'},
+    {time:'13:30',title:'🍽️ Almoço reforçado',desc:'Calorias extra pós long run',tag:'REFEIÇÃO',cat:'nutrition'},
+    {time:'15:00',title:'NSDR / descanso',desc:'Recuperação máxima',tag:'🧘',cat:'recovery'},
+    {time:'19:00',title:'🍽️ Jantar',desc:'Hidratos noturnos para recuperação',tag:'REFEIÇÃO',cat:'nutrition'},
+    {time:'21:00',title:'Suplementos noite',desc:'Magnésio + Colágeno + Ashwagandha',tag:'💊',cat:'supps'},
+    {time:'22:30',title:'Dormir cedo',desc:'Sono prioritário após long run',tag:'🌙',cat:'sleep'},
+  ],
+  rest:[
+    {time:'07:30',title:'Acordar natural',desc:'Sem alarme · luz solar',tag:'☀️',cat:'morning'},
+    {time:'09:00',title:'☕ Café relaxado',desc:'Com calma',tag:'CAFÉ',cat:'nutrition'},
+    {time:'10:00',title:'Suplementos manhã',desc:"Lion's Mane + Omega-3 + Multi + B12",tag:'💊',cat:'supps'},
+    {time:'10:30',title:'🍽️ 1.ª Refeição',desc:'Proteína + fruta + ovos',tag:'REFEIÇÃO',cat:'nutrition'},
+    {time:'13:00',title:'🍽️ Almoço',desc:'Refeição longe treino',tag:'REFEIÇÃO',cat:'nutrition'},
+    {time:'14:00',title:'Descanso ativo',desc:'Caminhada leve, stretching',tag:'🚶',cat:'recovery'},
+    {time:'19:00',title:'🍽️ Jantar',desc:'Refeição normal',tag:'REFEIÇÃO',cat:'nutrition'},
+    {time:'21:00',title:'Suplementos noite',desc:'Magnésio + Colágeno',tag:'💊',cat:'supps'},
+    {time:'22:00',title:'Dormir cedo',desc:'Sono de qualidade',tag:'🌙',cat:'sleep'},
+  ],
+};
+
+let selectedDay = new Date().getDay();
+
+function initSchedule() {
+  renderWeekStrip();
+  renderScheduleForDay(selectedDay);
+}
+
+function renderWeekStrip() {
+  const now=new Date(), todayDow=now.getDay();
+  const strip=document.getElementById('week-strip');
+  strip.innerHTML='';
+  const startOffset = now.getDate()-todayDow+1;
+  for(let i=0;i<7;i++){
+    const d=new Date(now); d.setDate(startOffset+i);
+    const dow=d.getDay();
+    const sched=TRAINING_SCHEDULE[dow];
+    const dotClass=sched.type==='gym'?'wd-dot-gym':sched.type.includes('run')?'wd-dot-run':'wd-dot-rest';
+    const isToday=d.toDateString()===now.toDateString();
+    const isSelected=dow===selectedDay;
+    const div=document.createElement('div');
+    div.className=`week-day${isToday?' today':''}${isSelected&&!isToday?' selected':''}`;
+    div.innerHTML=`<div class="wd-name">${DAYS_PT[dow]}</div><div class="wd-num">${d.getDate()}</div><div class="wd-dot ${dotClass}"></div>`;
+    div.onclick=()=>{selectedDay=dow;document.querySelectorAll('.week-day').forEach(el=>el.classList.remove('selected'));div.classList.add('selected');renderScheduleForDay(dow);};
+    strip.appendChild(div);
+  }
+}
+
+function renderScheduleForDay(dow) {
+  const sched=TRAINING_SCHEDULE[dow];
+  const schedule=SCHEDULES[sched.type]||SCHEDULES.rest;
+  const now=new Date(), currentHour=now.getHours()+now.getMinutes()/60;
+  const isToday=dow===new Date().getDay();
+  document.getElementById('sched-day-title').textContent=`${DAYS_FULL[dow].toUpperCase()} — ${sched.label}`;
+  const catColors={morning:'var(--accent5)',gym:'var(--accent4)',run:'var(--accent3)',nutrition:'var(--blue)',supps:'var(--pink)',recovery:'var(--accent2)',work:'var(--muted)',fasting:'var(--accent)',sleep:'var(--blue)'};
+  let html='<div class="timeline">';
+  schedule.forEach((item,i)=>{
+    const [h,m]=item.time.split(':').map(Number);
+    const itemHour=h+m/60;
+    let dotClass='tl-dot-future',activeClass='';
+    if(isToday){if(itemHour<currentHour-0.5)dotClass='tl-dot-done';else if(itemHour<=currentHour+0.5){dotClass='tl-dot-now';activeClass='active-now';}}
+    html+=`<div class="tl-item ${activeClass}"><div class="tl-time">${item.time}</div><div class="tl-dot ${dotClass}"></div><div class="tl-content"><div class="tl-title">${item.title}</div><div class="tl-desc">${item.desc}</div><div class="tl-tag" style="color:${catColors[item.cat]||'var(--muted)'}">${item.tag}</div></div></div>`;
+    if(i<schedule.length-1)html+='<div class="tl-sep"></div>';
+  });
+  document.getElementById('schedule-content').innerHTML=html+'</div>';
+}
+
+// ═══════════════════════════════════════
+// NUTRITION
+// ═══════════════════════════════════════
+const MEALS_GYM=[
+  {title:'PRÉ-TREINO',time:'09:30–10:00',items:[{name:'Proteína (frango/peixe/tofu)',qty:'150g'},{name:'Hidratos (arroz/batata doce)',qty:'300g'},{name:'Fruta',qty:'1 unid.'},{name:'Legumes',qty:'100g'},{name:'Azeite',qty:'5g'}],macros:{p:45,c:80,f:12}},
+  {title:'PÓS-TREINO',time:'~08:00',items:[{name:'Whey Vegan Protein',qty:'35g'},{name:'Nestum Zero / Aveia',qty:'125g'}],macros:{p:28,c:55,f:4}},
+  {title:'ALMOÇO',time:'13:00',items:[{name:'Proteína magra',qty:'150g'},{name:'Hidratos complexos',qty:'200g'},{name:'Legumes variados',qty:'150g'},{name:'Azeite',qty:'5g'}],macros:{p:40,c:65,f:10}},
+  {title:'LANCHE',time:'16:00',items:[{name:'Ovos cozidos',qty:'2 unid.'},{name:'Pão sem glúten',qty:'60g'},{name:'Queijo sem lactose',qty:'20g'}],macros:{p:22,c:30,f:14}},
+  {title:'JANTAR',time:'19:00',items:[{name:'Peixe gordo (salmão/sardinha)',qty:'150g'},{name:'Hidratos noturnos',qty:'200g'},{name:'Legumes',qty:'150g'},{name:'Azeite',qty:'5g'}],macros:{p:38,c:65,f:15}},
+];
+const MEALS_RUN=[
+  {title:'P. ALMOÇO',time:'10:00',items:[{name:'Ovos mexidos',qty:'2 unid.'},{name:'Pão sem glúten',qty:'60g'},{name:'Bagas vermelhas',qty:'100g'}],macros:{p:20,c:40,f:12}},
+  {title:'ALMOÇO',time:'13:00',items:[{name:'Proteína magra',qty:'150g'},{name:'Hidratos',qty:'200g'},{name:'Legumes + Azeite',qty:'150g+5g'}],macros:{p:40,c:65,f:10}},
+  {title:'PRÉ-CORRIDA',time:'~16:30',items:[{name:'Banana',qty:'1 unid.'},{name:'Manteiga amendoim',qty:'20g'}],macros:{p:5,c:30,f:10}},
+  {title:'PÓS-CORRIDA',time:'~18:30',items:[{name:'Whey Vegan Protein',qty:'35g'},{name:'Farinha aveia s/ glúten',qty:'40g'}],macros:{p:28,c:30,f:5}},
+  {title:'JANTAR',time:'20:00',items:[{name:'Proteína (frango/peixe)',qty:'150g'},{name:'Hidratos — estratégia noturna',qty:'300g'},{name:'Legumes variados',qty:'150g'}],macros:{p:40,c:80,f:10}},
+];
+const SUPPS={
+  morning:[{id:'lionsmane',name:"Lion's Mane",dose:'500–1000mg',time:'10:00'},{id:'omega3',name:'Omega-3 (EPA+DHA)',dose:'2–3g',time:'10:00'},{id:'multi',name:'Multivitamínico',dose:'1 cápsula',time:'10:00'},{id:'b12',name:'B12 Sublingual',dose:'1000mcg',time:'10:00'},{id:'theanine',name:'L-Teanina',dose:'200mg',time:'Com café'}],
+  posttrain:[{id:'creatine',name:'Creatina Monohidratada',dose:'5g',time:'Qualquer hora'},{id:'protein',name:'Proteína Vegan',dose:'35g',time:'Pós-treino'},{id:'ashwa',name:'Ashwagandha KSM-66',dose:'600mg',time:'Tarde'}],
+  night:[{id:'mag',name:'Magnésio Bisglicinato',dose:'400mg',time:'21:00'},{id:'collagen',name:'Colágeno',dose:'10g',time:'21:00'}],
+};
+
+function renderMeals() {
+  const dow=new Date().getDay(), sched=TRAINING_SCHEDULE[dow];
+  const meals=sched.type==='run'||sched.type==='long-run'?MEALS_RUN:MEALS_GYM;
+  document.getElementById('meals-content').innerHTML=meals.map(meal=>`<div class="meal-card"><div class="meal-header"><div class="meal-title">${meal.title}</div><div class="meal-time">${meal.time}</div></div>${meal.items.map(i=>`<div class="meal-item"><div class="meal-item-dot"></div><div class="meal-item-name">${i.name}</div><div class="meal-item-qty">${i.qty}</div></div>`).join('')}<div class="meal-macros"><div class="macro"><div class="macro-val macro-P">${meal.macros.p}g</div><div class="macro-lab">PROT</div></div><div class="macro"><div class="macro-val macro-C">${meal.macros.c}g</div><div class="macro-lab">HIDR</div></div><div class="macro"><div class="macro-val macro-F">${meal.macros.f}g</div><div class="macro-lab">GORD</div></div></div></div>`).join('');
+}
+
+function renderSupps() {
+  const suppChecked=STATE.habits[TODAY_KEY]||{};
+  const rs=(id,items)=>{ document.getElementById(id).innerHTML=items.map(s=>{const checked=suppChecked['supp_'+s.id]?'checked':'';return`<div class="supp-row ${checked}" onclick="toggleSupp('${s.id}',this)"><div class="supp-check">${checked?'✓':''}</div><div style="flex:1"><div class="supp-name">${s.name}</div><div style="font-size:11px;color:var(--muted2)">${s.dose}</div></div><div class="supp-time">${s.time}</div></div>`;}).join('');};
+  rs('supps-morning',SUPPS.morning); rs('supps-posttrain',SUPPS.posttrain); rs('supps-night',SUPPS.night);
+}
+
+function toggleSupp(id,el){const key='supp_'+id;if(!STATE.habits[TODAY_KEY])STATE.habits[TODAY_KEY]={};STATE.habits[TODAY_KEY][key]=!STATE.habits[TODAY_KEY][key];saveState(STATE);el.classList.toggle('checked');el.querySelector('.supp-check').textContent=STATE.habits[TODAY_KEY][key]?'✓':'';}
+function switchNutTab(tab,btn){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('nut-meals').style.display=tab==='meals'?'block':'none';document.getElementById('nut-supps').style.display=tab==='supps'?'block':'none';document.getElementById('nut-macro').style.display=tab==='macro'?'block':'none';}
+
+// ═══════════════════════════════════════
+// TRAINING
+// ═══════════════════════════════════════
+function initTraining() {
+  const dow=new Date().getDay(), sched=TRAINING_SCHEDULE[dow];
+  const icons={gym:'🏋️',run:'🏃','long-run':'🏃',rest:'😴'}, tags={gym:'GYM',run:'RUN','long-run':'LONG',rest:'REST'};
+  const wot=document.getElementById('week-overview-train');
+  wot.innerHTML='';
+  [1,2,3,4,5,6,0].forEach(d=>{
+    const s=TRAINING_SCHEDULE[d], isToday=d===dow;
+    wot.innerHTML+=`<div class="wo-day${isToday?' today':''}"><div class="wo-label">${DAYS_PT[d]}</div><div class="wo-icon">${icons[s.type]}</div><div class="wo-tag">${tags[s.type]}</div></div>`;
+  });
+
+  const tc=document.getElementById('training-content');
+  if(sched.type==='gym'){
+    tc.innerHTML=`<div class="workout-block"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="wb-title">TREINO FORÇA</div><div style="font-family:var(--mono);font-size:11px;color:var(--muted)">06:45 · ~75min</div></div><div style="font-size:11px;color:var(--muted2);margin-bottom:10px;font-family:var(--mono)">JEFF NIPPARD · FUNDAMENTALS HYPERTROPHY</div><div class="exercise-item"><div class="ex-num">1.</div><div class="ex-name">Agachamento</div><div class="ex-sets">3×6 · RPE 7</div></div><div class="exercise-item"><div class="ex-num">2.</div><div class="ex-name">Supino / Press Barra</div><div class="ex-sets">3×8 · RPE 7</div></div><div class="exercise-item"><div class="ex-num">3.</div><div class="ex-name">Remada Barra</div><div class="ex-sets">3×8 · RPE 7</div></div><div class="exercise-item"><div class="ex-num">4.</div><div class="ex-name">Peso Morto Romeno</div><div class="ex-sets">3×8 · RPE 7</div></div><div class="exercise-item"><div class="ex-num">5.</div><div class="ex-name">Desenvolvimento Halteres</div><div class="ex-sets">3×10 · RPE 7</div></div><div class="exercise-item"><div class="ex-num">6.</div><div class="ex-name">Curl Bíceps</div><div class="ex-sets">3×12 · RPE 8</div></div><div class="exercise-item"><div class="ex-num">7.</div><div class="ex-name">Extensão Tríceps</div><div class="ex-sets">3×12 · RPE 8</div></div></div><div class="alert alert-blue"><span class="alert-icon">💡</span><div class="alert-text">Progressão semanal de carga. Regista os pesos para garantir overload progressivo.</div></div>`;
+  } else if(sched.type==='run'||sched.type==='long-run'){
+    const isLong=sched.type==='long-run';
+    tc.innerHTML=`<div class="workout-block" style="background:linear-gradient(135deg,var(--card2),rgba(6,214,160,0.08));border-color:rgba(6,214,160,0.2)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="wb-title" style="color:var(--accent3)">${isLong?'CORRIDA LONGA':'CORRIDA'}</div><div style="font-family:var(--mono);font-size:11px;color:var(--muted)">${isLong?'09:00 · 60–90min':'17:30 · 40–50min'}</div></div><div class="exercise-item"><div class="ex-num">📍</div><div class="ex-name">Aquecimento dinâmico</div><div class="ex-sets">${isLong?'10 min':'5–8 min'}</div></div><div class="exercise-item"><div class="ex-num">🏃</div><div class="ex-name">${isLong?'Long run · Z2 (60–75% FC)':'Corrida contínua ou intervalos'}</div><div class="ex-sets">${isLong?'50–70 min':'30–35 min'}</div></div><div class="exercise-item"><div class="ex-num">🏁</div><div class="ex-name">Arrefecimento + stretching</div><div class="ex-sets">5 min</div></div></div><div class="alert alert-green"><span class="alert-icon">💡</span><div class="alert-text">Physiological Sigh para controlo de ansiedade. Janela IF: ${isLong?'14:10':'14:10'} hoje. Pós-corrida: Whey + Creatina 5g imediato.</div></div>`;
+  } else {
+    tc.innerHTML=`<div class="card" style="border-color:rgba(255,165,77,0.2)"><div style="font-family:var(--display);font-size:22px;color:var(--accent5);margin-bottom:10px">DIA DE RECUPERAÇÃO</div><div style="font-size:12px;color:var(--muted2);line-height:1.8">😴 Recuperação é treino — o músculo cresce no descanso.<br><br>✅ Caminhada leve (20–30 min opcional)<br>✅ Stretching / mobilidade 15 min<br>✅ NSDR 10–20 min após almoço<br>✅ Creatina 5g mesmo em descanso<br>✅ Magnésio à noite para sono profundo<br>✅ Sono 7–8h — prioridade máxima</div></div>`;
+  }
+}
+
+// ═══════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════
+function getLast7Days(){const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push({key:d.toISOString().slice(0,10),label:DAYS_PT[d.getDay()]});}return days;}
+
+function initProgress() {
+  const days=getLast7Days();
+
+  // Sleep chart — prefer live history data if available
+  const history = STATE.liveData?.history || [];
+  const sleepVals = days.map(d=>{
+    const live=history.find(r=>r.date===d.key);
+    if(live&&live.sleep_duration_min) return parseFloat(live.sleep_duration_min);
+    return parseFloat((STATE.metrics[d.key]||{}).sleep_duration_min)||0;
+  });
+  const avgSlp=sleepVals.filter(v=>v>0);
+  const avgH = avgSlp.length>0?Math.floor(avgSlp.reduce((a,b)=>a+b)/avgSlp.length/60):null;
+  document.getElementById('avg-sleep').textContent = avgH!==null?avgH+'h':'—';
+  const badgeClass=avgH>=7?'badge-green':avgH>=6?'badge-yellow':'badge-red';
+  const badgeTxt=avgH>=7?'✅ Óptimo':avgH>=6?'⚠️ OK':'❌ Baixo';
+  document.getElementById('sleep-badge2').innerHTML=avgH!==null?`<span class="badge ${badgeClass}">${badgeTxt}</span>`:'';
+
+  const max=sleepVals.length>0?Math.max(...sleepVals,480):480;
+  document.getElementById('sleep-chart').innerHTML=days.map((d,i)=>{
+    const v=sleepVals[i]; const h=v>0?Math.round((v/max)*58):4;
+    const color=v>=420?'var(--blue)':v>=360?'var(--accent)':v>0?'var(--accent4)':'var(--border2)';
+    return`<div class="chart-bar" style="height:${h}px;background:${color}"></div>`;
+  }).join('');
+  document.getElementById('sleep-chart-labels').innerHTML=days.map(d=>`<div class="chart-label">${d.label}</div>`).join('');
+
+  // Weight
+  const weightVals=days.map(d=>{
+    const live=history.find(r=>r.date===d.key);
+    if(live&&live.weight_kg) return parseFloat(live.weight_kg);
+    return parseFloat((STATE.metrics[d.key]||{}).weight_kg)||0;
+  });
+  const latest=weightVals.filter(v=>v>0).slice(-1)[0];
+  document.getElementById('latest-weight').textContent=latest?latest+'kg':'—';
+  const wMax=Math.max(...weightVals.filter(v=>v>0),80)||80;
+  const wMin=Math.min(...weightVals.filter(v=>v>0),60)||60;
+  const wRange=wMax-wMin||5;
+  document.getElementById('weight-chart').innerHTML=days.map((d,i)=>{
+    const v=weightVals[i]; const h=v>0?Math.max(8,Math.round(((v-wMin+1)/(wRange+2))*55)):4;
+    return`<div class="chart-bar" style="height:${h}px;background:var(--accent)"></div>`;
+  }).join('');
+  document.getElementById('weight-chart-labels').innerHTML=days.map(d=>`<div class="chart-label">${d.label}</div>`).join('');
+
+  // Workout count
+  const now=new Date(); let gym=0,run=0,total=0;
+  for(let i=0;i<now.getDate();i++){const d=new Date(now.getFullYear(),now.getMonth(),i+1);const s=TRAINING_SCHEDULE[d.getDay()];if(s.type==='gym'){gym++;total++;}else if(s.type.includes('run')){run++;total++;}}
+  document.getElementById('gym-count').textContent=gym;
+  document.getElementById('run-count').textContent=run;
+  const pct=total>0?Math.round((gym+run)/total*100):0;
+  document.getElementById('consistency-bar').style.width=pct+'%';
+  document.getElementById('consistency-text').textContent=`${gym+run}/${total} sessões · ${pct}%`;
+
+  renderSavedNotes();
+}
+
+function saveNote(){const note=document.getElementById('daily-note').value.trim();if(!note)return;if(!STATE.notes)STATE.notes=[];STATE.notes.unshift({date:TODAY_KEY,text:note,ts:Date.now()});if(STATE.notes.length>30)STATE.notes=STATE.notes.slice(0,30);saveState(STATE);document.getElementById('daily-note').value='';renderSavedNotes();}
+function renderSavedNotes(){const notes=(STATE.notes||[]).slice(0,5);if(!notes.length){document.getElementById('saved-notes').innerHTML='';return;}document.getElementById('saved-notes').innerHTML='<div class="section-title" style="margin-top:14px">NOTAS RECENTES</div>'+notes.map(n=>`<div style="background:var(--card2);border-radius:10px;padding:10px 12px;margin-bottom:6px;border:1px solid var(--border)"><div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">${n.date}</div><div style="font-size:13px;color:var(--muted2)">${n.text}</div></div>`).join('');}
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:10px 16px;font-family:var(--mono);font-size:12px;color:var(--text);z-index:300;max-width:300px;text-align:center;transition:opacity 0.3s';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._to);t._to=setTimeout(()=>t.style.opacity='0',3000);}
+
+// ═══════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════
+function showPage(pageId,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+pageId).classList.add('active');
+  btn.classList.add('active');
+  if(pageId==='schedule')initSchedule();
+  if(pageId==='nutrition'){renderMeals();renderSupps();}
+  if(pageId==='training'){document.getElementById('week-overview-train').innerHTML='';initTraining();}
+  if(pageId==='progress')initProgress();
+  if(pageId==='settings')initSettings();
+}
+
+// ═══════════════════════════════════════
+// SETTINGS PAGE
+// ═══════════════════════════════════════
+function initSettings(){
+  // Preenche o campo com o URL actual
+  const input=document.getElementById('settings-url-input');
+  if(input && STATE.sheetsUrl) input.value=STATE.sheetsUrl;
+
+  // Mostra URL actual formatado
+  const current=document.getElementById('settings-current-url');
+  if(current) current.textContent = STATE.sheetsUrl ? 'URL actual: '+STATE.sheetsUrl.slice(0,60)+'...' : 'Sem URL configurado';
+
+  // Estado do sync
+  const lastSync=document.getElementById('settings-last-sync');
+  if(lastSync) lastSync.textContent = STATE.lastSync ? new Date(STATE.lastSync).toLocaleString('pt-PT') : 'Nunca';
+
+  const source=document.getElementById('settings-source');
+  if(source) source.textContent = STATE.sheetsUrl ? 'Samsung Health (auto)' : 'Manual';
+
+  const urlStatus=document.getElementById('settings-url-status');
+  if(urlStatus){
+    urlStatus.textContent = STATE.sheetsUrl ? '✅ Configurado' : '❌ Por configurar';
+    urlStatus.style.color = STATE.sheetsUrl ? 'var(--accent3)' : 'var(--accent4)';
+  }
+}
+
+function saveSheetUrlFromSettings(){
+  const url=document.getElementById('settings-url-input').value.trim();
+  if(!url){showToast('❌ Cola o URL do Apps Script');return;}
+  if(!url.startsWith('https://script.google.com')){showToast('❌ URL inválido — deve começar com https://script.google.com');return;}
+  STATE.sheetsUrl=url;
+  saveState(STATE);
+  initSettings();
+  showToast('✅ URL guardado! A sincronizar...');
+  syncNow();
+}
+
+function clearLocalData(){
+  if(!confirm('Apagar todos os dados locais? (hábitos, métricas manuais, notas)')) return;
+  STATE.metrics={};
+  STATE.habits={};
+  STATE.notes=[];
+  STATE.lastSync=null;
+  STATE.liveData={};
+  if(!STATE.metrics[TODAY_KEY]) STATE.metrics[TODAY_KEY]={};
+  if(!STATE.habits[TODAY_KEY])  STATE.habits[TODAY_KEY]={};
+  saveState(STATE);
+  showToast('🗑️ Dados locais apagados');
+  initSettings();
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+window.addEventListener('load',()=>{
+  const now=new Date();
+  document.getElementById('topbar-day').textContent=DAYS_FULL[now.getDay()].toUpperCase();
+  document.getElementById('topbar-date').textContent=`${now.getDate()} ${MONTHS_PT[now.getMonth()].toUpperCase()} ${now.getFullYear()}`;
+
+  const dow=now.getDay(), sched=TRAINING_SCHEDULE[dow];
+  document.getElementById('day-type-title').textContent=sched.label;
+  document.getElementById('day-type-sub').textContent=sched.sub;
+  const badgeMap={gym:'<span class="badge badge-red">FORÇA</span>',run:'<span class="badge badge-green">CARDIO</span>','long-run':'<span class="badge badge-blue">LONG RUN</span>',rest:'<span class="badge badge-orange">RECUPERAÇÃO</span>'};
+  document.getElementById('day-badge').innerHTML=badgeMap[sched.type]||'';
+
+  const ifData=IF_SCHEDULE[sched.type];
+  document.getElementById('if-protocol').textContent=ifData.protocol;
+  document.getElementById('if-fast').textContent=ifData.fast;
+  document.getElementById('if-eat').textContent=ifData.eat;
+  document.getElementById('if-coffee').textContent=ifData.coffee;
+  const ifBadgeMap={gym:'<span class="badge badge-red">16:8</span>',run:'<span class="badge badge-green">14:10</span>','long-run':'<span class="badge badge-green">14:10</span>',rest:'<span class="badge badge-red">16:8</span>'};
+  document.getElementById('if-badge').innerHTML=ifBadgeMap[sched.type]||'';
+
+  // Show setup if no URL configured
+  if(!STATE.sheetsUrl) document.getElementById('setup-banner').style.display='block';
+  else setSyncState('ok');
+
+  updateAllDisplays();
+  renderHabits();
+  renderMeals();
+  renderSupps();
+
+  // Auto-sync on load if URL configured
+  if(STATE.sheetsUrl) setTimeout(()=>syncNow(true),500);
+
+  // Auto-sync every 30 min
+  setInterval(()=>{ if(STATE.sheetsUrl) syncNow(true); }, 30*60*1000);
+});
+</script>
+</body>
+</html>
